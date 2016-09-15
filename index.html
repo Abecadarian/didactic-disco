@@ -33,13 +33,27 @@
         </div>
         
         <p class="location">
-			<form action="input_form.asp">
-                Town or City: <input type="text" name="CityName" value="Wellington" id="CityName"><br>
-                <input type="submit" value="Submit" onclick = "getWeatherByCity()">
-            </form>
+
 
         </p>
         
+<div class="result">
+                <div class="search">
+                <input class="city_names" id="city_names" name="city_names" placeholder="Enter city name here"/>
+                <input type = "button" name="submit" value="Search" id="submit" class="submit"/>
+                </div>
+                <div class="main">
+                    <span class="city">
+                        <p id="demo"></p>
+                    </span>
+                    <span class="country"></span>
+                    <div class="temp"></div>
+                    <div class="humidity"></div>
+                    <div class="rain"></div>
+                    <div class="clouds"></div>
+                </div>
+          </div>
+
         <div id="clouds"></div>
         
         <!-- JavaScript includes - jQuery, moment.js and our own script.js -->

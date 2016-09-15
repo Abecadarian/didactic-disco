@@ -126,18 +126,33 @@ $(function () {
     function showError(msg) {
         weatherDiv.addClass('error').html(msg);
     }
-    function getWeatherByCity() {
-        Place = "London"; //document.getElementsByName('CityName');
-        var weatherAPI = 'http://api.openweathermap.org/data/2.5/forecast?q=London,uk&mode=xml&appid=b1b15e88fa797225412429c1c50c122a1';
-        $.getJSON(weatherAPI, function (response) {
-            addWeather(this.weather[0].icon, moment(localTime).calendar(), // We are using the moment.js library to format the date
-            this.weather[0].main + ' <b>' + convertTemperature(this.main.temp_min) + '°' + DEG +
-                ' / ' + convertTemperature(this.main.temp_max) + '°' + DEG + '</b>');
+    $('.submit').click(function () {
+        var city = $('.city_names').val();
+        //console.log(city);
+        $.ajax({
+            url: "http://api.openweathermap.org/data/2.5/find",
+            // name of the callback parameter
+            jsonp: "callback",
+            // tell jQuery we're expecting JSONP
+            dataType: "jsonp",
+            //what we want
+            data: {
+                q: city + "nz,",
+                units: "metric",
+                mode: "json",
+                appid: OpenWeatherAppKey
+            },
+            // work with the response
+            success: function (response) {
+                var temp = response.list[0].main.temp;
+                document.getElementById("demo").innerHTML = temp;
+                $('.city').html(response.list[0].name);
+                $('.country').html('( </span><span>' + response.list[0].sys.country + '</span><span> )');
+                $('.temp').html('<span>' + response.list[0].main.temp + '</span><span class="t">* C</span>');
+                $('.humidity').html('<span>' + response.list[0].main.humidity + '</span><span class="humidity">* C</span>');
+                $('.rain').html('<span>' + response.list[0].main.rain + '</span><span class="rain">* C</span>');
+                $('.clouds').html('<span>' + response.list[0].main.clouds + '</span><span class="clouds">* C</span>');
+            }
         });
-        // Add the location to the page
-        location.html(Place + ', <b>' + "New Zealand" + '</b>');
-        weatherDiv.addClass('loaded');
-        // Set the slider to the first slide
-        showSlide(0);
-    }
+    });
 });
