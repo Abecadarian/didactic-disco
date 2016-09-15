@@ -149,9 +149,7 @@ $(function () {
                 $('.city').html(response.list[0].name);
                 $('.country').html('( </span><span>' + response.list[0].sys.country + '</span><span> )');
                 $('.temp').html('<span>' + response.list[0].main.temp + '</span><span class="t">* C</span>');
-                $('.humidity').html('<span>' + response.list[0].main.humidity + '</span><span class="humidity">* C</span>');
-                $('.rain').html('<span>' + response.list[0].main.rain + '</span><span class="rain">* C</span>');
-                $('.clouds').html('<span>' + response.list[0].main.clouds + '</span><span class="clouds">* C</span>');
+                $('.humidity').html('<span>' + response.list[0].main.humidity + '</span><span class="humidity">% Humidity</span>');
             }
         });
     });
