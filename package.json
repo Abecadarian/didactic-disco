@@ -1,16 +1,26 @@
 {
-  "name": "weatherapp",
+  "name": "weatherwizard",
   "version": "1.0.0",
-  "description": "",
+  "description": "Weather app to show weather at user's location",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abecadarian/Wizpository.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abecadarian/Wizpository/issues"
+  },
+  "homepage": "https://github.com/Abecadarian/Wizpository#readme",
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "jquery": "^3.1.0",
-    "weather": "^0.1.0"
+    "jquery": "^3.1.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
   }
 }

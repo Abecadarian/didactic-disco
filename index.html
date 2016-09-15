@@ -1,59 +1,51 @@
 <!DOCTYPE html>
 <html>
     <head>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap:
-http://api.openweathermap.org https://ssl.gstatic.com 'unsafe-eval'; style-src 'self'
-'unsafe-inline'; media-src *">                  
         <meta charset="utf-8" />
-        <title>Weather Forecast App Revisited | Tutorialzine Demo</title>
-
+        <title>Weather Forecast App</title>
+        
         <!-- The stylesheet -->
         <link rel="stylesheet" href="assets/css/styles.css" />
-
+        
         <!-- Google Fonts -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Playball|Open+Sans+Condensed:300,700" />
-
+        
         <!--[if lt IE 9]>
           <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
     </head>
-
+    
     <body>
 
-<div data-role="page" id="weather-page">
+		<header>
+			<h1>Weather Forecast</h1>
+		</header>
+		
+        <div id="weather">
 
-    <div data-role="header" class="header">
-        <h1 id="app-title">Weather App</h1>
-        <a href="/" class="ui-btn ui-btn-left ui-btn-corner-all ui-icon-home ui-btn-icon-notext" rel="external">Home</a>
-    </div>
+        	<ul id="scroller">
+        		<!-- The forecast items will go here -->
+        	</ul>
+        	
+        	<a href="#" class="arrow previous">Previous</a>
+        	<a href="#" class="arrow next">Next</a>
 
-    <div role="main" class="ui-content">
-        <form>
-            <label for="zip-code">Type your zip code:</label>
-            <input id="zip-code-input" name="zip-code" placeholder="eg. 98001" required />
-            <button id="get-weather-btn" data-role="button" data-icon="search">Find Weather</button>
-        </form>
-
-        <ul id="weather-data" data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow not-displayed">
-            <li data-role="list-divider" id="title" class="ui-li-divider ui-bar-a"></li>
-            <li><span id="summary"><span id="temperature"></span> F <img src="" /></span></li>
-            <li>Wind: <span id="wind"></span> knots</li>
-            <li>Humidity: <span id="humidity"></span> %</li>
-            <li>Visibility: <span id="visibility"></span></li>
-            <li>Sunrise: <span id="sunrise"></span></li>
-            <li>Sunset: <span id="sunset"></span></li>
-        </ul>
-
-        <div id="error-msg" class="not-displayed">
         </div>
+        
+        <p class="location">
+			<form action="input_form.asp">
+                Town or City: <input type="text" name="CityName" value="Wellington" id="CityName"><br>
+                <input type="submit" value="Submit" onclick = "getWeatherByCity()">
+            </form>
 
-    </div>
-
-    <footer data-role="footer" data-position="fixed">
-        <h4>Visual Studio Tools for Cordova Demo</h4>
-    </footer>
-<script src="assets/js//script.js"></script>
-<script src="assets/js/weather.js"></script>
-</div>
+        </p>
+        
+        <div id="clouds"></div>
+        
+        <!-- JavaScript includes - jQuery, moment.js and our own script.js -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0/moment.min.js"></script>
+		<script src="assets/js/script.js"></script>
+		
     </body>
 </html>
