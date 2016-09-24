@@ -1,215 +1,177 @@
 $(function(){
 
-	/* Configuration */
+    /* Configuration */
 
-	var DEG = 'c';			// c for celsius, f for fahrenheit
-    var Place;
-var OpenWeatherAppKey = "45ca27c993eebb5158f172446ec3e1ab";
-	var weatherDiv = $('#weather'),
-		scroller = $('#scroller'),
-		location = $('p.location');
+    var DEG = 'c';  // c for celsius, f for fahrenheit
+	var OpenWeatherID = "45ca27c993eebb5158f172446ec3e1ab"
+    var weatherDiv = $('#weather'),
+        scroller = $('#scroller'),
+        location = $('p.location');
 
-	// Does this browser support geolocation?
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
-	}
-	else{
-		showError("Your browser does not support Geolocation!");
-	}
+    // Does this browser support geolocation?
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+    }
+    else{
+        showError("Your browser does not support Geolocation!");
+    }
 
-	// Get user's location, and use OpenWeatherMap
-	// to get the location name and weather forecast
+    // Get user's location, and use OpenWeatherMap
+    // to get the location name and weather forecast
 
-	function locationSuccess(position) {
+    function locationSuccess(position) {
 
-		try{
+        try{
 
-			// Retrive the cache
-			var cache = localStorage.weatherCache && JSON.parse(localStorage.weatherCache);
+            // Retrive the cache
+            var cache = localStorage.weatherCache && JSON.parse(localStorage.weatherCache);
 
-			var d = new Date();
+            var d = new Date();
 
-			// If the cache is newer than 30 minutes, use the cache
-			if(cache && cache.timestamp && cache.timestamp > d.getTime() - 30*60*1000){
+            // If the cache is newer than 30 minutes, use the cache
+            if(cache && cache.timestamp && cache.timestamp > d.getTime() - 30*60*1000){
 
-				// Get the offset from UTC (turn the offset minutes into ms)
-				var offset = d.getTimezoneOffset()*60*1000;
-				var city = cache.data.city.name;
-				var country = cache.data.city.country;
+                // Get the offset from UTC (turn the offset minutes into ms)
+                var offset = d.getTimezoneOffset()*60*1000;
+                var city = cache.data.city.name;
+                var country = cache.data.city.country;
 
-				$.each(cache.data.list, function(){
-					// "this" holds a forecast object
+                $.each(cache.data.list, function(){
+                    // "this" holds a forecast object
 
-					// Get the local time of this forecast (the api returns it in utc)
-					var localTime = new Date(this.dt*1000 - offset);
+                    // Get the local time of this forecast (the api returns it in utc)
+                    var localTime = new Date(this.dt*1000 - offset);
 
-					addWeather(
-						this.weather[0].icon,
-						moment(localTime).calendar(),	// We are using the moment.js library to format the date
-						this.weather[0].main + ' <b>' + convertTemperature(this.main.temp_min) + '°' + DEG +
-												' / ' + convertTemperature(this.main.temp_max) + '°' + DEG+'</b>'
-					);
+                    addWeather(
+                        this.weather[0].icon,
+                        moment(localTime).calendar(),   // We are using the moment.js library to format the date
+                        this.weather[0].main + ' <b>' + convertTemperature(this.main.temp_min) + '°' + DEG +
+                                                ' / ' + convertTemperature(this.main.temp_max) + '°' + DEG+'</b>'
+                    );
 
-				});
+                });
 
-				// Add the location to the page
-				location.html(city+', <b>'+country+'</b>');
+                // Add the location to the page
+                location.html(city+', <b>'+country+'</b>');
 
-				weatherDiv.addClass('loaded');
+                weatherDiv.addClass('loaded');
 
-				// Set the slider to the first slide
-				showSlide(0);
+                // Set the slider to the first slide
+                showSlide(0);
 
-			}
+            }
 
-			else{
-			
-				// If the cache is old or nonexistent, issue a new AJAX request
+            else{
 
-				var weatherAPI = 'http://api.openweathermap.org/data/2.5/forecast?lat='+position.coords.latitude+
-									'&lon='+position.coords.longitude+'&appid=' + OpenWeatherAppKey;
+                // If the cache is old or nonexistent, issue a new AJAX request
 
-				$.getJSON(weatherAPI, function(response){
+                var weatherAPI = 'http://api.openweathermap.org/data/2.5/forecast?lat='+position.coords.latitude+
+                                    '&lon='+position.coords.longitude+'&appid='+OpenWeatherID
 
-					// Store the cache
-					localStorage.weatherCache = JSON.stringify({
-						timestamp:(new Date()).getTime(),	// getTime() returns milliseconds
-						data: response
-					});
+                $.getJSON(weatherAPI, function(response){
 
-					// Call the function again
-					locationSuccess(position);
-				});
-			}
+                    // Store the cache
+                    localStorage.weatherCache = JSON.stringify({
+                        timestamp:(new Date()).getTime(),   // getTime() returns milliseconds
+                        data: response
+                    });
 
-		}
-		catch(e){
-			showError("We can't find information about your city!");
-			window.console && console.error(e);
-		}
-	}
+                    // Call the function again
+                    locationSuccess(position);
+                });
+            }
 
-	function addWeather(icon, day, condition){
+        }
+        catch(e){
+            showError("We can't find information about your city!");
+            window.console && console.error(e);
+        }
+    }
 
-		var markup = '<li>'+
-			'<img src="assets/img/icons/'+ icon +'.png" />'+
-			' <p class="day">'+ day +'</p> <p class="cond">'+ condition +
-			'</p></li>';
+    function addWeather(icon, day, condition){
 
-		scroller.append(markup);
-	}
+        var markup = '<li>'+
+            '<img src="assets/img/icons/'+ icon +'.png" />'+
+            ' <p class="day">'+ day +'</p> <p class="cond">'+ condition +
+            '</p></li>';
 
-	/* Handling the previous / next arrows */
+        scroller.append(markup);
+    }
 
-	var currentSlide = 0;
-	weatherDiv.find('a.previous').click(function(e){
-		e.preventDefault();
-		showSlide(currentSlide-1);
-	});
+    /* Handling the previous / next arrows */
 
-	weatherDiv.find('a.next').click(function(e){
-		e.preventDefault();
-		showSlide(currentSlide+1);
-	});
+    var currentSlide = 0;
+    weatherDiv.find('a.previous').click(function(e){
+        e.preventDefault();
+        showSlide(currentSlide-1);
+    });
 
+    weatherDiv.find('a.next').click(function(e){
+        e.preventDefault();
+        showSlide(currentSlide+1);
+    });
 
-	// listen for arrow keys
+    // listen for arrow keys
 
-	$(document).keydown(function(e){
-		switch(e.keyCode){
-			case 37: 
-				weatherDiv.find('a.previous').click();
-			break;
-			case 39:
-				weatherDiv.find('a.next').click();
-			break;
-		}
-	});
+    $(document).keydown(function(e){
+        switch(e.keyCode){
+            case 37: 
+                weatherDiv.find('a.previous').click();
+            break;
+            case 39:
+                weatherDiv.find('a.next').click();
+            break;
+        }
+    });
 
-	function showSlide(i){
-		var items = scroller.find('li');
+    function showSlide(i){
+        var items = scroller.find('li');
 
-		if (i >= items.length || i < 0 || scroller.is(':animated')){
-			return false;
-		}
+        if (i >= items.length || i < 0 || scroller.is(':animated')){
+            return false;
+        }
 
-		weatherDiv.removeClass('first last');
+        weatherDiv.removeClass('first last');
 
-		if(i == 0){
-			weatherDiv.addClass('first');
-		}
-		else if (i == items.length-1){
-			weatherDiv.addClass('last');
-		}
+        if(i == 0){
+            weatherDiv.addClass('first');
+        }
+        else if (i == items.length-1){
+            weatherDiv.addClass('last');
+        }
 
-		scroller.animate({left:(-i*100)+'%'}, function(){
-			currentSlide = i;
-		});
-	}
+        scroller.animate({left:(-i*100)+'%'}, function(){
+            currentSlide = i;
+        });
+    }
 
-	/* Error handling functions */
+    /* Error handling functions */
 
-	function locationError(error){
-		switch(error.code) {
-			case error.TIMEOUT:
-				showError("A timeout occured! Please try again!");
-				break;
-			case error.POSITION_UNAVAILABLE:
-				showError('We can\'t detect your location. Sorry!');
-				break;
-			case error.PERMISSION_DENIED:
-				showError('Please allow geolocation access for this to work.');
-				break;
-			case error.UNKNOWN_ERROR:
-				showError('An unknown error occured!');
-				break;
-		}
+    function locationError(error){
+        switch(error.code) {
+            case error.TIMEOUT:
+                showError("A timeout occured! Please try again!");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                showError('We can\'t detect your location. Sorry!');
+                break;
+            case error.PERMISSION_DENIED:
+                showError('Please allow geolocation access for this to work.');
+                break;
+            case error.UNKNOWN_ERROR:
+                showError('An unknown error occured!');
+                break;
+        }
 
-	}
+    }
 
-	function convertTemperature(kelvin){
-		// Convert the temperature to either Celsius or Fahrenheit:
-		return Math.round(DEG == 'c' ? (kelvin - 273.15) : (kelvin*9/5 - 459.67));
-	}
+    function convertTemperature(kelvin){
+        // Convert the temperature to either Celsius or Fahrenheit:
+        return Math.round(DEG == 'c' ? (kelvin - 273.15) : (kelvin*9/5 - 459.67));
+    }
 
-	function showError(msg){
-		weatherDiv.addClass('error').html(msg);
-	}
-
-$('.submit').click(function(){
- var city = $('.city_names').val();
- //console.log(city);
- $.ajax({
-     url: "http://api.openweathermap.org/data/2.5/find",
-  
-     // name of the callback parameter
-     jsonp: "callback",
-  
-     // tell jQuery we're expecting JSONP
-     dataType: "jsonp",
-  
-     //what we want
-     data: {
-         q: city + "nz,",
-         units:"metric",
-         mode: "json",
-		 appid: OpenWeatherAppKey
-     },
-  
-     // work with the response
-     success: function( response ) { 
-        
-             var temp = response.list[0].main.temp;
-        document.getElementById("demo").innerHTML = temp;
-
-        $('.city').html(response.list[0].name);
-        $('.country').html('( </span><span>'+response.list[0].sys.country+'</span><span> )');
-        $('.temp').html('<span>'+response.list[0].main.temp+'</span><span class="t">* C</span>');
-		$('.humidity').html('<span>'+response.list[0].main.humidity+'</span><span class="humidity">% Humidity</span>');
-       
-         
-     }
- });
-});
+    function showError(msg){
+        weatherDiv.addClass('error').html(msg);
+    }
 
 });

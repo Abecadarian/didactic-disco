@@ -1,8 +1,7 @@
 $(function () {
     /* Configuration */
     var DEG = 'c'; // c for celsius, f for fahrenheit
-    var Place;
-    var OpenWeatherAppKey = "45ca27c993eebb5158f172446ec3e1ab";
+    var OpenWeatherID = "45ca27c993eebb5158f172446ec3e1ab";
     var weatherDiv = $('#weather'), scroller = $('#scroller'), location = $('p.location');
     // Does this browser support geolocation?
     if (navigator.geolocation) {
@@ -41,7 +40,7 @@ $(function () {
             else {
                 // If the cache is old or nonexistent, issue a new AJAX request
                 var weatherAPI = 'http://api.openweathermap.org/data/2.5/forecast?lat=' + position.coords.latitude +
-                    '&lon=' + position.coords.longitude + '&appid=' + OpenWeatherAppKey;
+                    '&lon=' + position.coords.longitude + '&appid=' + OpenWeatherID;
                 $.getJSON(weatherAPI, function (response) {
                     // Store the cache
                     localStorage.weatherCache = JSON.stringify({
@@ -126,31 +125,4 @@ $(function () {
     function showError(msg) {
         weatherDiv.addClass('error').html(msg);
     }
-    $('.submit').click(function () {
-        var city = $('.city_names').val();
-        //console.log(city);
-        $.ajax({
-            url: "http://api.openweathermap.org/data/2.5/find",
-            // name of the callback parameter
-            jsonp: "callback",
-            // tell jQuery we're expecting JSONP
-            dataType: "jsonp",
-            //what we want
-            data: {
-                q: city + "nz,",
-                units: "metric",
-                mode: "json",
-                appid: OpenWeatherAppKey
-            },
-            // work with the response
-            success: function (response) {
-                var temp = response.list[0].main.temp;
-                document.getElementById("demo").innerHTML = temp;
-                $('.city').html(response.list[0].name);
-                $('.country').html('( </span><span>' + response.list[0].sys.country + '</span><span> )');
-                $('.temp').html('<span>' + response.list[0].main.temp + '</span><span class="t">* C</span>');
-                $('.humidity').html('<span>' + response.list[0].main.humidity + '</span><span class="humidity">% Humidity</span>');
-            }
-        });
-    });
 });
